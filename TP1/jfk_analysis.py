@@ -14,6 +14,7 @@ with open("C:/Users/Théo/Downloads/jfkrelease-2017-dce65d0ec70a54d5744de17d280f
     day = 0
     oldest_date = time.strptime('12/30/1999', "%m/%d/%Y")
     newest_date = time.strptime('01/01/1900', "%m/%d/%Y")
+    dates = {}
 
     for line in f:
         array = line.split(';')
@@ -66,17 +67,21 @@ with open("C:/Users/Théo/Downloads/jfkrelease-2017-dce65d0ec70a54d5744de17d280f
             if oldest_date > date:
                 oldest_date = date
 
-            print("\n")
+            if date not in dates:
+                dates[date] = 1
+            else:
+                dates[date] += 1
 
 
 
-    print("Max:", max)
+    print("\nMax:", max)
     print("Min:", min)
     print("Mean:", tot/count)
-    print("Document with no pages:", count_no_page)
+    print("Document with no pages:", count_no_page, "\n")
     print("Number of types:", len(doc_type))
-    print(doc_type)
+    print(doc_type, "\n")
     print("Number of agencies:", len(agencies))
-    print(agencies)
+    print(agencies, "\n")
     print("Oldest date:", oldest_date[0],'/', oldest_date[1],'/', oldest_date[2])
     print("Newest date:", newest_date[0],'/', newest_date[1],'/', newest_date[2])
+    print("Number of documents per year:", dates)
