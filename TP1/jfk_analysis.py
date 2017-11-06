@@ -1,3 +1,5 @@
+import time
+
 with open("C:/Users/Théo/Downloads/jfkrelease-2017-dce65d0ec70a54d5744de17d280f3ad2.csv") as f:
     max = 0
     min = 0
@@ -6,12 +8,22 @@ with open("C:/Users/Théo/Downloads/jfkrelease-2017-dce65d0ec70a54d5744de17d280f
     count_no_page = 0
     doc_type = {}
     agencies = {}
+    date = ''
+    year = 0
+    month = 0
+    day = 0
+    oldest_date = time.strptime('12/30/1999', "%m/%d/%Y")
+    newest_date = time.strptime('01/01/1900', "%m/%d/%Y")
 
     for line in f:
         array = line.split(';')
+
+        # Question 1
         print(array)
         print("Number of fields", len(array))
 
+
+        # Question 2
         try:
             page_nb = int(array[11])
             if max < page_nb:
@@ -23,6 +35,7 @@ with open("C:/Users/Théo/Downloads/jfkrelease-2017-dce65d0ec70a54d5744de17d280f
         except:
             count_no_page += 1
 
+        # Question 3 : doc types
         new_doc_type = array[6]
         if new_doc_type != "Doc Type":
             if new_doc_type not in doc_type:
@@ -30,12 +43,32 @@ with open("C:/Users/Théo/Downloads/jfkrelease-2017-dce65d0ec70a54d5744de17d280f
             else:
                 doc_type[new_doc_type] += 1
 
+
+        # Question 3 : agencies
         agency = array[4]
         if agency != "Agency":
             if agency not in agencies:
                 agencies[agency] = 1
             else:
                 agencies[agency] += 1
+
+
+        # Question 4 : dates
+        if array[5] != 'Doc Date':
+            try:
+                date = time.strptime(array[5], '%m/%d/%Y')
+
+            except:
+                pass
+
+            if newest_date < date:
+                newest_date = date
+            if oldest_date > date:
+                oldest_date = date
+
+            print("\n")
+
+
 
     print("Max:", max)
     print("Min:", min)
@@ -45,3 +78,5 @@ with open("C:/Users/Théo/Downloads/jfkrelease-2017-dce65d0ec70a54d5744de17d280f
     print(doc_type)
     print("Number of agencies:", len(agencies))
     print(agencies)
+    print("Oldest date:", oldest_date[0],'/', oldest_date[1],'/', oldest_date[2])
+    print("Newest date:", newest_date[0],'/', newest_date[1],'/', newest_date[2])
