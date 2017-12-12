@@ -28,11 +28,7 @@ ch = logging.StreamHandler()
 ch.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logger.addHandler(ch)
 
-
-colnames = ["filename", "class"]
-filename = "/MNIST_all.csv"
-data = pd.read_csv(filename, names=colnames, header=None)
-print(data)
+IMG_FEATURE_SIZE = (8, 8)
 
 def extract_features_subresolution(img,img_feature_size = (8, 8)):
     return None
@@ -60,6 +56,10 @@ if __name__ == "__main__":
         # see the doc for the option since there is no header ;
         # specify the column names :  filename , class
         file_list = []
+        colnames = ["filename", "class"]
+        filename = args.images_list
+        file_list = pd.read_csv(args.images_list, header=None, names=colnames)
+        print(file_list)
         #logger.info('Loaded {} images in {}'.format(all_df.shape,args.images_list))
 
 
