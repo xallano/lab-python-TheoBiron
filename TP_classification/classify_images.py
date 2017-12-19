@@ -31,7 +31,22 @@ logger.addHandler(ch)
 IMG_FEATURE_SIZE = (8, 8)
 
 def extract_features_subresolution(img,img_feature_size = (8, 8)):
-    return None
+    # convert color images to grey level
+    gray_img = img.convert('L')
+    # find the min dimension to rotate the image if needed
+    min_size = min(img.size)
+    if img.size[1] == min_size:
+        # convert landscape  to portrait
+        rotated_img = gray_img.rotate(90, expand=1)
+    else:
+        rotated_img = gray_img
+
+    # reduce the image to a given size
+    reduced_img = rotated_img.resize(
+        IMG_FEATURE_SIZE, Image.BOX).filter(ImageFilter.SHARPEN)
+
+    # return the values of the reduced image as features
+    return [255 - i for i in reduced_img.getdata()]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Extract features, train a classifier on images and test the classifier')
@@ -67,7 +82,7 @@ if __name__ == "__main__":
         # Modify the extract_features from TP_Clustering to extract 8x8 subresolution values
         # white must be 0 and black 255
         data = []
-        for i_path in tqdm(file_list):
+        for i_path in tqdm(file_list.filename):
             page_image = Image.open(i_path)
             data.append(extract_features_subresolution(page_image))
 
@@ -80,12 +95,15 @@ if __name__ == "__main__":
 
         # convert to np.array
         X = np.array(data)
-
+        Y = file_list['class']
 
 
 
     # save features
     if args.save_features:
+        df_features = pd.DataFrame(X)
+        df_features['class'] = Y
+        df_features.to_pickle(args.save_features+'.pickle')
         # convert X to dataframe with pd.DataFrame and save to pickle with to_pickle
         logger.info('Saved {} features and class to {}'.format(df_features.shape,args.save_features))
 

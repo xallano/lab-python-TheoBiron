@@ -3,3 +3,4 @@ clustered/
 test.py
 MNIST/
 MNIST_all.csv
+saved.pickle
