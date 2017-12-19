@@ -16,6 +16,7 @@ import pandas as pd
 from PIL import Image, ImageFilter
 from sklearn.cluster import KMeans
 from sklearn import svm, metrics, neighbors
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 
 import numpy as np
@@ -63,6 +64,9 @@ if __name__ == "__main__":
 
     if args.load_features:
         # read features from to_pickle
+        df_features = pd.read_pickle(args.load_features+'.pickle')
+        Y = list(df_features['class'])
+        X = df_features.drop(columns='class')
         pass
     else:
 
@@ -116,11 +120,14 @@ if __name__ == "__main__":
     logger.info("Training Classifier")
 
     # Use train_test_split to create train/test split
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+
     logger.info("Train set size is {}".format(X_train.shape))
     logger.info("Test set size is {}".format(X_test.shape))
 
     if args.nearest_neighbors:
         # create KNN classifier with args.nearest_neighbors as a parameter
+        clf = KNeighborsClassifier(args.nearest_neighbors)
         logger.info('Use kNN classifier with k= {}'.format(args.nearest_neighbors))
     else:
         logger.error('No classifier specified')
@@ -128,6 +135,7 @@ if __name__ == "__main__":
 
     # Do Training@
     t0 = time.time()
+    clf.fit(X_train, Y_train)
     logger.info("Training  done in %0.3fs" % (time.time() - t0))
 
     # Do testing
