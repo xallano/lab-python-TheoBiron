@@ -18,6 +18,7 @@ from sklearn.cluster import KMeans
 from sklearn import svm, metrics, neighbors
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
 
 import numpy as np
 
@@ -59,6 +60,7 @@ if __name__ == "__main__":
     classifier_group = parser.add_mutually_exclusive_group(required=True)
     classifier_group.add_argument('--nearest-neighbors',type=int)
     classifier_group.add_argument('--features-only', action='store_true', help='only extract features, do not train classifiers')
+    classifier_group.add_argument('--logistic-regression', action='store_true')
     args = parser.parse_args()
 
 
@@ -120,15 +122,23 @@ if __name__ == "__main__":
     logger.info("Training Classifier")
 
     # Use train_test_split to create train/test split
+    #X_train, X_validation, Y_train, Y_validation = train_test_split(X, Y, train_size=0.2)
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+
 
     logger.info("Train set size is {}".format(X_train.shape))
     logger.info("Test set size is {}".format(X_test.shape))
+    #logger.info("Validation set size is {}".format(X_validation.shape))
 
     if args.nearest_neighbors:
         # create KNN classifier with args.nearest_neighbors as a parameter
         clf = KNeighborsClassifier(args.nearest_neighbors)
         logger.info('Use kNN classifier with k= {}'.format(args.nearest_neighbors))
+
+    elif args.logistic_regression:
+        clf = LogisticRegression()
+        logger.info('Use logistic regression')
+
     else:
         logger.error('No classifier specified')
         sys.exit()
