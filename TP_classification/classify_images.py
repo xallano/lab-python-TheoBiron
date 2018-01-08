@@ -144,4 +144,6 @@ if __name__ == "__main__":
     predicted = clf.predict(X_test)
 
     # Print score produced by metrics.classification_report and metrics.accuracy_score
+    print(metrics.classification_report(Y_test, predicted))
+    print(metrics.accuracy_score(Y_test, predicted))
     logger.info("Testing  done in %0.3fs" % (time.time() - t0))
