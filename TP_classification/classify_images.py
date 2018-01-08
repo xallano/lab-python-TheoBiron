@@ -22,6 +22,7 @@ from sklearn.linear_model import LogisticRegression
 
 import numpy as np
 
+import matplotlib.pyplot as plt
 
 # Setup logging
 logger = logging.getLogger('classify_images.py')
@@ -61,12 +62,16 @@ if __name__ == "__main__":
     classifier_group.add_argument('--nearest-neighbors',type=int)
     classifier_group.add_argument('--features-only', action='store_true', help='only extract features, do not train classifiers')
     classifier_group.add_argument('--logistic-regression', action='store_true')
+    curve_group = parser.add_mutually_exclusive_group(required=False)
+    curve_group.add_argument('--learning-curve', action='store_true')
     args = parser.parse_args()
 
 
     if args.load_features:
         # read features from to_pickle
         df_features = pd.read_pickle(args.load_features+'.pickle')
+        if args.limit_samples:
+            df_features=df_features.sample(n=args.limit_samples)
         Y = list(df_features['class'])
         X = df_features.drop(columns='class')
         pass
@@ -142,6 +147,28 @@ if __name__ == "__main__":
     else:
         logger.error('No classifier specified')
         sys.exit()
+
+    def printaccuracy(sizeTrain,X_train,Y_train):
+        X_train, X_none, Y_train, Y_none = train_test_split(X_train,Y_train,train_size=sizeTrain)
+        clf.fit(X_train,Y_train)
+        predicted = clf.predict(X_test)
+        return metrics.accuracy_score(Y_test,predicted),clf.score(X_train, Y_train)
+
+    if args.learning_curve:
+        curb_y = []
+        curb_y2 = []
+        training_size = np.array([0.01, 0.10, 0.20, 0.40, 0.60, 0.80, 0.99])
+        curb_x = df_features.shape[0] * np.array(training_size)
+        for i in range(0, 7):
+            curb_y.append(printaccuracy(training_size[i], X_train, Y_train)[0])
+            curb_y2.append(printaccuracy(training_size[i], X_train, Y_train)[1])
+
+        plt.plot(curb_x, curb_y)
+        plt.plot(curb_x, curb_y2)
+        plt.title("Training curves")
+        plt.xlabel("Train set size")
+        plt.ylabel("Accuracy")
+        plt.show()
 
     # Do Training@
     t0 = time.time()
