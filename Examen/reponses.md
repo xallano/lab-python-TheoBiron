@@ -25,4 +25,4 @@ Résultat : 0.74877
 classify_pages.py --load-features saved --knn
 ```
 
-![Best KNN](C:/Users/Théo/Images/knn.png, "Best KNN")
+![Best KNN](knn.png, "Best KNN")
