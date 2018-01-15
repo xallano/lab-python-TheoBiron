@@ -26,3 +26,16 @@ classify_pages.py --load-features saved --knn
 ```
 
 ![Best KNN](knn.png "Best KNN")
+
+Meilleur : knn = 9 avec un test accuracy = 0.82086
+
+
+# Tester avec logistic regression
+---
+
+```
+classify_pages.py --load-features saved --logistic-regression
+```
+
+Résultat: 0.81376
+
